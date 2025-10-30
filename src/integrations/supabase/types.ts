@@ -390,6 +390,8 @@ export type Database = {
     }
     Functions: {
       generate_quote_number: { Args: never; Returns: string }
+      is_admin: { Args: { user_id: string }; Returns: boolean }
+      is_staff: { Args: { user_id: string }; Returns: boolean }
     }
     Enums: {
       product_status: "publicado" | "borrador" | "archivado"
@@ -400,7 +402,7 @@ export type Database = {
         | "rechazada"
         | "convertida"
       stock_status: "en_stock" | "bajo_stock" | "a_pedido" | "sin_stock"
-      user_role: "admin" | "vendedor" | "diseñador"
+      user_role: "admin" | "vendedor" | "diseñador" | "cliente"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -537,7 +539,7 @@ export const Constants = {
         "convertida",
       ],
       stock_status: ["en_stock", "bajo_stock", "a_pedido", "sin_stock"],
-      user_role: ["admin", "vendedor", "diseñador"],
+      user_role: ["admin", "vendedor", "diseñador", "cliente"],
     },
   },
 } as const

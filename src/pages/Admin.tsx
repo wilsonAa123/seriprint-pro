@@ -28,6 +28,35 @@ const Admin = () => {
         return;
       }
 
+      // Check if user has staff role (admin, vendedor, diseñador)
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", session.user.id)
+        .single();
+
+      if (profileError || !profile) {
+        console.error("Error fetching profile:", profileError);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "No se pudo verificar tu perfil",
+        });
+        navigate("/");
+        return;
+      }
+
+      // Only allow admin, vendedor, and diseñador roles
+      if (!["admin", "vendedor", "diseñador"].includes(profile.role)) {
+        toast({
+          variant: "destructive",
+          title: "Acceso Denegado",
+          description: "No tienes permisos para acceder al panel de administración",
+        });
+        navigate("/");
+        return;
+      }
+
       setUser(session.user);
     } catch (error: any) {
       console.error("Error checking user:", error);
