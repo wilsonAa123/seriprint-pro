@@ -194,6 +194,7 @@ export type Database = {
           internal_cost: number | null
           min_stock_alert: number | null
           name: string
+          price: number | null
           sku: string
           status: Database["public"]["Enums"]["product_status"] | null
           stock_quantity: number | null
@@ -209,6 +210,7 @@ export type Database = {
           internal_cost?: number | null
           min_stock_alert?: number | null
           name: string
+          price?: number | null
           sku: string
           status?: Database["public"]["Enums"]["product_status"] | null
           stock_quantity?: number | null
@@ -224,6 +226,7 @@ export type Database = {
           internal_cost?: number | null
           min_stock_alert?: number | null
           name?: string
+          price?: number | null
           sku?: string
           status?: Database["public"]["Enums"]["product_status"] | null
           stock_quantity?: number | null

@@ -179,6 +179,7 @@ const Catalogo = () => {
                       category={product.categories?.name || "Sin categoría"}
                       stockStatus={product.stock_status}
                       sku={product.sku}
+                      price={product.price}
                     />
                   ))}
                 </div>

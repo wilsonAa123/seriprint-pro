@@ -11,6 +11,7 @@ interface ProductCardProps {
   category: string;
   stockStatus: string;
   sku: string;
+  price?: number;
 }
 
 const stockStatusConfig = {
@@ -20,7 +21,7 @@ const stockStatusConfig = {
   sin_stock: { label: "Sin Stock", variant: "destructive" as const, color: "bg-destructive" },
 };
 
-export const ProductCard = ({ id, name, image, category, stockStatus, sku }: ProductCardProps) => {
+export const ProductCard = ({ id, name, image, category, stockStatus, sku, price }: ProductCardProps) => {
   const statusInfo = stockStatusConfig[stockStatus as keyof typeof stockStatusConfig] || stockStatusConfig.a_pedido;
 
   return (
@@ -45,7 +46,12 @@ export const ProductCard = ({ id, name, image, category, stockStatus, sku }: Pro
             {name}
           </h3>
         </Link>
-        <p className="text-xs text-muted-foreground">SKU: {sku}</p>
+        <div className="flex items-center justify-between">
+          <p className="text-xs text-muted-foreground">SKU: {sku}</p>
+          {price && (
+            <p className="text-lg font-bold text-primary">${price.toLocaleString()}</p>
+          )}
+        </div>
       </CardContent>
 
       <CardFooter className="p-4 pt-0">
