@@ -8,6 +8,7 @@ import { LogOut, Package, Users, FileText, Settings } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { UserManagement } from "@/components/admin/UserManagement";
 import { ProductManagement } from "@/components/admin/ProductManagement";
+import { QuoteManagement } from "@/components/admin/QuoteManagement";
 
 const Admin = () => {
   const [user, setUser] = useState<any>(null);
@@ -182,14 +183,7 @@ const Admin = () => {
               </TabsContent>
 
               <TabsContent value="quotes" className="space-y-4">
-                <div className="text-center py-12">
-                  <FileText className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-                  <h3 className="text-xl font-semibold mb-2">Gestión de Cotizaciones</h3>
-                  <p className="text-muted-foreground mb-6">
-                    Visualiza y gestiona las cotizaciones recibidas
-                  </p>
-                  <Button>Ver Cotizaciones</Button>
-                </div>
+                <QuoteManagement />
               </TabsContent>
 
               <TabsContent value="customers" className="space-y-4">

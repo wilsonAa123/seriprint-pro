@@ -271,11 +271,54 @@ export type Database = {
         }
         Relationships: []
       }
+      quote_attachments: {
+        Row: {
+          file_name: string
+          file_size: number | null
+          file_type: string
+          file_url: string
+          id: string
+          quote_id: string
+          uploaded_at: string | null
+        }
+        Insert: {
+          file_name: string
+          file_size?: number | null
+          file_type: string
+          file_url: string
+          id?: string
+          quote_id: string
+          uploaded_at?: string | null
+        }
+        Update: {
+          file_name?: string
+          file_size?: number | null
+          file_type?: string
+          file_url?: string
+          id?: string
+          quote_id?: string
+          uploaded_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quote_attachments_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: false
+            referencedRelation: "quotes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       quote_items: {
         Row: {
+          additional_costs: number | null
+          base_cost: number | null
           created_at: string | null
           id: string
           notes: string | null
+          number_of_colors: number | null
+          print_area_size: string | null
+          printing_technique: string | null
           product_id: string | null
           product_name: string
           quantity: number
@@ -286,9 +329,14 @@ export type Database = {
           variant_size: string | null
         }
         Insert: {
+          additional_costs?: number | null
+          base_cost?: number | null
           created_at?: string | null
           id?: string
           notes?: string | null
+          number_of_colors?: number | null
+          print_area_size?: string | null
+          printing_technique?: string | null
           product_id?: string | null
           product_name: string
           quantity?: number
@@ -299,9 +347,14 @@ export type Database = {
           variant_size?: string | null
         }
         Update: {
+          additional_costs?: number | null
+          base_cost?: number | null
           created_at?: string | null
           id?: string
           notes?: string | null
+          number_of_colors?: number | null
+          print_area_size?: string | null
+          printing_technique?: string | null
           product_id?: string | null
           product_name?: string
           quantity?: number
@@ -337,11 +390,16 @@ export type Database = {
           customer_location: string | null
           customer_name: string
           customer_phone: string
+          delivery_time: string | null
+          discount_amount: number | null
           id: string
           internal_notes: string | null
           notes: string | null
+          payment_terms: string | null
           quote_number: string
           status: Database["public"]["Enums"]["quote_status"] | null
+          subtotal: number | null
+          tax_amount: number | null
           total_amount: number | null
           updated_at: string | null
           valid_until: string | null
@@ -354,11 +412,16 @@ export type Database = {
           customer_location?: string | null
           customer_name: string
           customer_phone: string
+          delivery_time?: string | null
+          discount_amount?: number | null
           id?: string
           internal_notes?: string | null
           notes?: string | null
+          payment_terms?: string | null
           quote_number: string
           status?: Database["public"]["Enums"]["quote_status"] | null
+          subtotal?: number | null
+          tax_amount?: number | null
           total_amount?: number | null
           updated_at?: string | null
           valid_until?: string | null
@@ -371,11 +434,16 @@ export type Database = {
           customer_location?: string | null
           customer_name?: string
           customer_phone?: string
+          delivery_time?: string | null
+          discount_amount?: number | null
           id?: string
           internal_notes?: string | null
           notes?: string | null
+          payment_terms?: string | null
           quote_number?: string
           status?: Database["public"]["Enums"]["quote_status"] | null
+          subtotal?: number | null
+          tax_amount?: number | null
           total_amount?: number | null
           updated_at?: string | null
           valid_until?: string | null
