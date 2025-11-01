@@ -42,15 +42,27 @@ export const Footer = () => {
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li className="flex items-center space-x-2">
                 <Phone className="h-4 w-4" />
-                <span>+56 9 1234 5678</span>
+                <a 
+                  href="https://wa.me/59160917842" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="hover:text-primary transition-colors"
+                >
+                  +591 60917842
+                </a>
               </li>
               <li className="flex items-center space-x-2">
                 <Mail className="h-4 w-4" />
-                <span>contacto@serigrafpro.cl</span>
+                <a 
+                  href="mailto:contacto@serigrafpro.bo"
+                  className="hover:text-primary transition-colors"
+                >
+                  contacto@serigrafpro.bo
+                </a>
               </li>
               <li className="flex items-center space-x-2">
                 <MapPin className="h-4 w-4" />
-                <span>Santiago, Chile</span>
+                <span>Santa Cruz, Bolivia</span>
               </li>
             </ul>
           </div>
