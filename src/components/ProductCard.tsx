@@ -2,7 +2,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 interface ProductCardProps {
   id: string;
@@ -22,7 +22,12 @@ const stockStatusConfig = {
 };
 
 export const ProductCard = ({ id, name, image, category, stockStatus, sku, price }: ProductCardProps) => {
+  const navigate = useNavigate();
   const statusInfo = stockStatusConfig[stockStatus as keyof typeof stockStatusConfig] || stockStatusConfig.a_pedido;
+
+  const handleQuoteClick = () => {
+    navigate(`/cotizacion?producto=${id}`);
+  };
 
   return (
     <Card className="group overflow-hidden hover:shadow-glow transition-all duration-300 animate-fade-in">
@@ -55,7 +60,7 @@ export const ProductCard = ({ id, name, image, category, stockStatus, sku, price
       </CardContent>
 
       <CardFooter className="p-4 pt-0">
-        <Button className="w-full" size="sm">
+        <Button className="w-full" size="sm" onClick={handleQuoteClick}>
           <ShoppingCart className="h-4 w-4 mr-2" />
           Solicitar Cotización
         </Button>
