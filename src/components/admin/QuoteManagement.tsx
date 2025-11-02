@@ -344,6 +344,14 @@ export const QuoteManagement = () => {
 
   const handleStatusChange = async (quoteId: string, newStatus: string) => {
     try {
+      const { data: quoteData, error: fetchError } = await supabase
+        .from('quotes')
+        .select('customer_email, customer_name, quote_number')
+        .eq('id', quoteId)
+        .single();
+
+      if (fetchError) throw fetchError;
+
       const { error } = await supabase
         .from("quotes")
         .update({ status: newStatus as any })
@@ -351,10 +359,34 @@ export const QuoteManagement = () => {
 
       if (error) throw error;
 
-      toast({
-        title: "Estado actualizado",
-        description: "El estado de la cotización se actualizó correctamente",
-      });
+      // Enviar notificación por email si el cliente tiene email
+      if (quoteData?.customer_email) {
+        try {
+          await supabase.functions.invoke('send-quote-notification', {
+            body: {
+              customerEmail: quoteData.customer_email,
+              customerName: quoteData.customer_name,
+              quoteNumber: quoteData.quote_number,
+              status: newStatus
+            }
+          });
+          toast({
+            title: "Estado actualizado",
+            description: "La cotización se actualizó y se envió notificación al cliente",
+          });
+        } catch (emailError) {
+          console.error('Error sending notification:', emailError);
+          toast({
+            title: "Estado actualizado",
+            description: "La cotización se actualizó (email no enviado)",
+          });
+        }
+      } else {
+        toast({
+          title: "Estado actualizado",
+          description: "El estado de la cotización se actualizó correctamente",
+        });
+      }
 
       fetchQuotes();
     } catch (error: any) {
@@ -640,7 +672,7 @@ export const QuoteManagement = () => {
                               </TableCell>
                               <TableCell>{item.printing_technique}</TableCell>
                               <TableCell>{item.quantity}</TableCell>
-                              <TableCell>${item.subtotal.toFixed(2)}</TableCell>
+                              <TableCell>${item.subtotal?.toFixed(2) || "0.00"}</TableCell>
                               <TableCell>
                                 <Button
                                   type="button"
