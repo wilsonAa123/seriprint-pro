@@ -19,7 +19,18 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { RefreshCw, Shield, User as UserIcon } from "lucide-react";
+import { RefreshCw, Shield, User as UserIcon, Trash2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
@@ -125,6 +136,31 @@ export const UserManagement = () => {
     }
   };
 
+  const deleteUser = async (userId: string, userName: string) => {
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .delete()
+        .eq("id", userId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Usuario eliminado",
+        description: `El usuario ${userName} ha sido eliminado correctamente`,
+      });
+
+      // Refresh the users list
+      fetchUsers();
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message || "No se pudo eliminar el usuario",
+      });
+    }
+  };
+
   const isAdmin = currentUserRole === "admin";
 
   if (loading) {
@@ -187,40 +223,68 @@ export const UserManagement = () => {
                     </TableCell>
                     {isAdmin && (
                       <TableCell>
-                        <Select
-                          value={user.role}
-                          onValueChange={(value) => updateUserRole(user.id, value)}
-                        >
-                          <SelectTrigger className="w-[160px]">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="cliente">
-                              <span className="flex items-center gap-2">
-                                <UserIcon className="h-4 w-4" />
-                                Cliente
-                              </span>
-                            </SelectItem>
-                            <SelectItem value="diseñador">
-                              <span className="flex items-center gap-2">
-                                <Shield className="h-4 w-4" />
-                                Diseñador
-                              </span>
-                            </SelectItem>
-                            <SelectItem value="vendedor">
-                              <span className="flex items-center gap-2">
-                                <Shield className="h-4 w-4" />
-                                Vendedor
-                              </span>
-                            </SelectItem>
-                            <SelectItem value="admin">
-                              <span className="flex items-center gap-2">
-                                <Shield className="h-4 w-4 text-destructive" />
-                                Administrador
-                              </span>
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
+                        <div className="flex items-center gap-2">
+                          <Select
+                            value={user.role}
+                            onValueChange={(value) => updateUserRole(user.id, value)}
+                          >
+                            <SelectTrigger className="w-[160px]">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="cliente">
+                                <span className="flex items-center gap-2">
+                                  <UserIcon className="h-4 w-4" />
+                                  Cliente
+                                </span>
+                              </SelectItem>
+                              <SelectItem value="diseñador">
+                                <span className="flex items-center gap-2">
+                                  <Shield className="h-4 w-4" />
+                                  Diseñador
+                                </span>
+                              </SelectItem>
+                              <SelectItem value="vendedor">
+                                <span className="flex items-center gap-2">
+                                  <Shield className="h-4 w-4" />
+                                  Vendedor
+                                </span>
+                              </SelectItem>
+                              <SelectItem value="admin">
+                                <span className="flex items-center gap-2">
+                                  <Shield className="h-4 w-4 text-destructive" />
+                                  Administrador
+                                </span>
+                              </SelectItem>
+                            </SelectContent>
+                          </Select>
+                          
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button variant="destructive" size="icon">
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>¿Eliminar usuario?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Esta acción eliminará permanentemente al usuario <strong>{user.full_name}</strong> del sistema. 
+                                  Esta acción no se puede deshacer.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={() => deleteUser(user.id, user.full_name)}
+                                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                >
+                                  Eliminar
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </div>
                       </TableCell>
                     )}
                   </TableRow>
