@@ -92,13 +92,8 @@ export const UserManagement = () => {
 
       if (profilesError) throw profilesError;
 
-      // Create users array with emails from profiles
-      const usersData = profiles?.map((profile) => ({
-        ...profile,
-        email: undefined as string | undefined, // Will be populated if we can access auth data
-      })) || [];
-
-      setUsers(usersData);
+      // Use profiles data directly, which includes emails
+      setUsers(profiles || []);
     } catch (error: any) {
       console.error("Error fetching users:", error);
       toast({
