@@ -466,6 +466,7 @@ export type Database = {
       generate_quote_number: { Args: never; Returns: string }
       is_admin: { Args: { user_id: string }; Returns: boolean }
       is_staff: { Args: { user_id: string }; Returns: boolean }
+      sync_user_emails: { Args: never; Returns: undefined }
     }
     Enums: {
       product_status: "publicado" | "borrador" | "archivado"
