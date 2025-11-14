@@ -115,7 +115,12 @@ export const QuoteManagement = () => {
         .select("*")
         .order("created_at", { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching quotes:", error);
+        throw error;
+      }
+      
+      console.log("Fetched quotes:", data);
       setQuotes(data || []);
     } catch (error: any) {
       toast({
@@ -136,7 +141,12 @@ export const QuoteManagement = () => {
         .select("*")
         .eq("quote_id", quoteId);
 
-      if (itemsError) throw itemsError;
+      if (itemsError) {
+        console.error("Error fetching items:", itemsError);
+        throw itemsError;
+      }
+      
+      console.log("Items de cotización:", items);
       setQuoteItems(items || []);
 
       // Fetch attachments
@@ -145,10 +155,20 @@ export const QuoteManagement = () => {
         .select("*")
         .eq("quote_id", quoteId);
 
-      if (attachmentsError) throw attachmentsError;
+      if (attachmentsError) {
+        console.error("Error fetching attachments:", attachmentsError);
+        throw attachmentsError;
+      }
+      
+      console.log("Archivos adjuntos:", attachments);
       setQuoteAttachments(attachments || []);
     } catch (error: any) {
       console.error("Error fetching quote details:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "No se pudieron cargar los detalles de la cotización",
+      });
     }
   };
 
@@ -463,16 +483,21 @@ export const QuoteManagement = () => {
             Administra las solicitudes de cotización
           </p>
         </div>
-        <Dialog open={dialogOpen} onOpenChange={(open) => {
-          setDialogOpen(open);
-          if (!open) resetForm();
-        }}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              Nueva Cotización
-            </Button>
-          </DialogTrigger>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={fetchQuotes} disabled={loading}>
+            <Loader2 className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+            Actualizar
+          </Button>
+          <Dialog open={dialogOpen} onOpenChange={(open) => {
+            setDialogOpen(open);
+            if (!open) resetForm();
+          }}>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="h-4 w-4 mr-2" />
+                Nueva Cotización
+              </Button>
+            </DialogTrigger>
           <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>
@@ -850,6 +875,7 @@ export const QuoteManagement = () => {
           </DialogContent>
         </Dialog>
       </div>
+    </div>
 
       {/* View Quote Dialog */}
       <Dialog open={viewDialogOpen} onOpenChange={setViewDialogOpen}>
@@ -981,15 +1007,32 @@ export const QuoteManagement = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {quotes.map((quote) => (
-                <TableRow key={quote.id}>
-                  <TableCell className="font-medium">{quote.quote_number}</TableCell>
-                  <TableCell>{quote.customer_name}</TableCell>
-                  <TableCell>{format(new Date(quote.created_at), "PPP", { locale: es })}</TableCell>
-                  <TableCell>
-                    {quote.total_amount ? `$${quote.total_amount.toLocaleString()}` : "-"}
+              {quotes.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                    No hay cotizaciones registradas
                   </TableCell>
-                  <TableCell>
+                </TableRow>
+              ) : (
+                quotes.map((quote) => (
+                  <TableRow key={quote.id}>
+                    <TableCell className="font-medium">{quote.quote_number}</TableCell>
+                    <TableCell>
+                      <div>
+                        <div className="font-medium">{quote.customer_name}</div>
+                        {quote.customer_email && (
+                          <div className="text-sm text-muted-foreground">{quote.customer_email}</div>
+                        )}
+                        {quote.customer_phone && (
+                          <div className="text-sm text-muted-foreground">{quote.customer_phone}</div>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>{format(new Date(quote.created_at), "PPP", { locale: es })}</TableCell>
+                    <TableCell>
+                      {quote.total_amount ? `$${quote.total_amount.toLocaleString()}` : "-"}
+                    </TableCell>
+                    <TableCell>
                     <Select
                       value={quote.status}
                       onValueChange={(value) => handleStatusChange(quote.id, value)}
@@ -1020,7 +1063,8 @@ export const QuoteManagement = () => {
                     </div>
                   </TableCell>
                 </TableRow>
-              ))}
+              ))
+              )}
             </TableBody>
           </Table>
         </CardContent>

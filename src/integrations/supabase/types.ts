@@ -383,6 +383,7 @@ export type Database = {
       }
       quotes: {
         Row: {
+          admin_response: string | null
           created_at: string | null
           created_by: string | null
           customer_email: string | null
@@ -397,6 +398,10 @@ export type Database = {
           notes: string | null
           payment_terms: string | null
           quote_number: string
+          responded_at: string | null
+          responded_by: string | null
+          response_file_name: string | null
+          response_file_url: string | null
           status: Database["public"]["Enums"]["quote_status"] | null
           subtotal: number | null
           tax_amount: number | null
@@ -405,6 +410,7 @@ export type Database = {
           valid_until: string | null
         }
         Insert: {
+          admin_response?: string | null
           created_at?: string | null
           created_by?: string | null
           customer_email?: string | null
@@ -419,6 +425,10 @@ export type Database = {
           notes?: string | null
           payment_terms?: string | null
           quote_number: string
+          responded_at?: string | null
+          responded_by?: string | null
+          response_file_name?: string | null
+          response_file_url?: string | null
           status?: Database["public"]["Enums"]["quote_status"] | null
           subtotal?: number | null
           tax_amount?: number | null
@@ -427,6 +437,7 @@ export type Database = {
           valid_until?: string | null
         }
         Update: {
+          admin_response?: string | null
           created_at?: string | null
           created_by?: string | null
           customer_email?: string | null
@@ -441,6 +452,10 @@ export type Database = {
           notes?: string | null
           payment_terms?: string | null
           quote_number?: string
+          responded_at?: string | null
+          responded_by?: string | null
+          response_file_name?: string | null
+          response_file_url?: string | null
           status?: Database["public"]["Enums"]["quote_status"] | null
           subtotal?: number | null
           tax_amount?: number | null
@@ -456,6 +471,13 @@ export type Database = {
             referencedRelation: "customers"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "quotes_responded_by_fkey"
+            columns: ["responded_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
         ]
       }
     }
@@ -466,6 +488,7 @@ export type Database = {
       generate_quote_number: { Args: never; Returns: string }
       is_admin: { Args: { user_id: string }; Returns: boolean }
       is_staff: { Args: { user_id: string }; Returns: boolean }
+      sync_user_emails: { Args: never; Returns: undefined }
     }
     Enums: {
       product_status: "publicado" | "borrador" | "archivado"
