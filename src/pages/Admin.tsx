@@ -13,12 +13,47 @@ import { QuoteManagement } from "@/components/admin/QuoteManagement";
 const Admin = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState({
+    products: 0,
+    pendingQuotes: 0,
+    customers: 0,
+  });
   const navigate = useNavigate();
   const { toast } = useToast();
 
   useEffect(() => {
     checkUser();
+    fetchStats();
   }, []);
+
+  const fetchStats = async () => {
+    try {
+      // Contar productos publicados
+      const { count: productsCount } = await supabase
+        .from("products")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "publicado");
+
+      // Contar cotizaciones pendientes
+      const { count: quotesCount } = await supabase
+        .from("quotes")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "pendiente");
+
+      // Contar clientes
+      const { count: customersCount } = await supabase
+        .from("customers")
+        .select("*", { count: "exact", head: true });
+
+      setStats({
+        products: productsCount || 0,
+        pendingQuotes: quotesCount || 0,
+        customers: customersCount || 0,
+      });
+    } catch (error) {
+      console.error("Error fetching stats:", error);
+    }
+  };
 
   const checkUser = async () => {
     try {
@@ -122,7 +157,7 @@ const Admin = () => {
               <Package className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">0</div>
+              <div className="text-2xl font-bold">{stats.products}</div>
               <p className="text-xs text-muted-foreground">Productos publicados</p>
             </CardContent>
           </Card>
@@ -133,7 +168,7 @@ const Admin = () => {
               <FileText className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">0</div>
+              <div className="text-2xl font-bold">{stats.pendingQuotes}</div>
               <p className="text-xs text-muted-foreground">Pendientes</p>
             </CardContent>
           </Card>
@@ -144,7 +179,7 @@ const Admin = () => {
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">0</div>
+              <div className="text-2xl font-bold">{stats.customers}</div>
               <p className="text-xs text-muted-foreground">Total de clientes</p>
             </CardContent>
           </Card>
