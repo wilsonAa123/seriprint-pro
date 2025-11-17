@@ -47,10 +47,11 @@ const Admin = () => {
         console.error("Error fetching quotes count:", quotesError);
       }
 
-      // Contar clientes
+      // Contar clientes (usuarios con rol 'cliente')
       const { count: customersCount, error: customersError } = await supabase
-        .from("customers")
-        .select("*", { count: "exact", head: true });
+        .from("profiles")
+        .select("*", { count: "exact", head: true })
+        .eq("role", "cliente");
 
       if (customersError) {
         console.error("Error fetching customers count:", customersError);
