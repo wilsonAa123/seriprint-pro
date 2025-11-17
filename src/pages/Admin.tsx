@@ -23,27 +23,38 @@ const Admin = () => {
 
   useEffect(() => {
     checkUser();
-    fetchStats();
   }, []);
 
   const fetchStats = async () => {
     try {
       // Contar productos publicados
-      const { count: productsCount } = await supabase
+      const { count: productsCount, error: productsError } = await supabase
         .from("products")
         .select("*", { count: "exact", head: true })
         .eq("status", "publicado");
 
+      if (productsError) {
+        console.error("Error fetching products count:", productsError);
+      }
+
       // Contar cotizaciones pendientes
-      const { count: quotesCount } = await supabase
+      const { count: quotesCount, error: quotesError } = await supabase
         .from("quotes")
         .select("*", { count: "exact", head: true })
         .eq("status", "pendiente");
 
+      if (quotesError) {
+        console.error("Error fetching quotes count:", quotesError);
+      }
+
       // Contar clientes
-      const { count: customersCount } = await supabase
+      const { count: customersCount, error: customersError } = await supabase
         .from("customers")
         .select("*", { count: "exact", head: true });
+
+      if (customersError) {
+        console.error("Error fetching customers count:", customersError);
+      }
 
       setStats({
         products: productsCount || 0,
@@ -96,6 +107,8 @@ const Admin = () => {
       }
 
       setUser(session.user);
+      // Cargar estadísticas después de verificar autenticación
+      fetchStats();
     } catch (error: any) {
       console.error("Error checking user:", error);
       navigate("/auth");
